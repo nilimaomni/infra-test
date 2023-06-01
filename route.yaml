@@ -1,0 +1,29 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: infra-test-ingress
+spec:
+  http:
+  - name: infra-test
+    match:
+      hosts:
+      - "*.amazonaws.com"
+      - "*.saisonomni.com"
+      paths:
+      - /infra-test/*
+    backends:
+       - serviceName: infra-test
+         servicePort: 8080
+    plugins:
+      - name: proxy-rewrite
+        enable: true
+        config:
+          uri : "/headers"
+      - name: proxy-rewrite
+        enable: true
+        config:
+          uri: "/headers"
+          headers:
+            Consumer_name: "$consumer_name"
+      - name : key-auth
+        enable: true
